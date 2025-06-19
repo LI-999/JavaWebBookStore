@@ -1,0 +1,91 @@
+package com.jakie.book.web;
+
+import com.jakie.book.pojo.User;
+import com.jakie.book.service.UserService;
+import com.jakie.book.service.impl.UserServiceImpl;
+import com.jakie.book.utils.WebUtils;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.io.IOException;
+import java.lang.reflect.Method;
+
+/***
+ * @Author jakie
+ * @Description //TODO 将先前的RegisterServlet和LoginServlet合并成UserServlet来处理业务
+ * @Date 17:40 2025/6/17
+ * @Param
+ * @return
+ **/
+public class UserServlet extends BaseServlet {
+
+    private UserService userService = new UserServiceImpl();
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ServletContext servletContext = getServletContext();
+        System.out.println(servletContext.getRealPath("/footer.jsp"));
+
+    }
+
+    protected void login(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        User user = userService.login(new User(null, username, password, null));
+        if(user!=null){
+            System.out.println("登录成功");
+            req.getRequestDispatcher("/pages/user/login_success.jsp").forward(req,resp);
+        }else{
+            System.out.println("用户名或密码错误");
+            req.setAttribute("Msg","用户名或密码错误");
+            req.setAttribute("username",username);
+            req.getRequestDispatcher("/pages/user/login.jsp").forward(req,resp);
+        }
+    }
+
+    /***
+     * @Author jakie
+     * @Description //TODO
+     * @Date 14:16 2025/6/18
+     * @Param [request, response]
+     * @return void
+     **/
+    protected void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        String email = request.getParameter("email");
+        String code = request.getParameter("code");
+//        System.out.println(username + " " + password + " " + email + " " + code);
+
+        User user = WebUtils.copyParamToBean(request.getParameterMap(), new User());
+
+
+        //验证码写成静态的
+        if ("abcde".equals(code)) {
+            if (!userService.existsUsername(username)) {
+                System.out.println("注册成功");
+                userService.registerUser(new User(null,username,password,email));
+                request.getRequestDispatcher("/pages/user/regist_success.jsp").forward(request, response);
+
+            } else {
+                System.out.println("用户名已存在");
+                request.setAttribute("username",username);
+                request.setAttribute("email",email);
+                request.setAttribute("Msg","用户名已存在");
+                request.getRequestDispatcher("/pages/user/regist.jsp").forward(request, response);
+
+            }
+        } else {
+            System.out.println("验证码不正确");
+            request.setAttribute("username",username);
+            request.setAttribute("email",email);
+            request.setAttribute("Msg","验证码不正确");
+            try {
+                request.getRequestDispatcher("/pages/user/regist.jsp").forward(request, response);
+            } catch (ServletException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+}
