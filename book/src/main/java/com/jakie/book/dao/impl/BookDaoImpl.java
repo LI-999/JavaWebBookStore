@@ -3,6 +3,7 @@ package com.jakie.book.dao.impl;
 import com.jakie.book.dao.BookDao;
 import com.jakie.book.pojo.Book;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class BookDaoImpl extends BaseDao implements BookDao {
@@ -20,7 +21,7 @@ public class BookDaoImpl extends BaseDao implements BookDao {
     }
 
     @Override
-    public int deleteBookById(int id) {
+    public int deleteBookById(int id)  {
         String sql = "delete from t_book where id = ?";
         return update(sql,id);
     }
@@ -35,5 +36,42 @@ public class BookDaoImpl extends BaseDao implements BookDao {
     public List<Book> queryBookList() {
         String sql = "select * from t_book";
         return queryForList(Book.class,sql);
+    }
+
+    @Override
+    public Integer queryForPageTotalCount() {
+        String sql = "select count(*) from t_book";
+        return queryForSingleValue(sql).intValue();
+    }
+
+    @Override
+    public Integer queryForPageTotalCountByPrice(Integer min,Integer max) {
+        String sql = "select count(*) from t_book where price between ? and ?";
+        return queryForSingleValue(sql,min,max).intValue();
+    }
+
+    @Override
+    public List<Book> queryForPageItems(Integer begin,Integer pageSize) {
+        String sql = "select * from t_book limit ?,?";
+        System.out.println((begin-1)*pageSize);
+        return queryForList(Book.class,sql,(begin-1)*pageSize,pageSize);
+    }
+
+    @Override
+    public List<Book> queryBookByPrice(Integer min, Integer max,Integer pageNo,Integer pageSize) {
+        String sql = "select * from t_book where price between ? and ? limit ?,?";
+        return queryForList(Book.class,sql,min,max,(pageNo-1)*pageSize,pageSize);
+    }
+
+    @Override
+    public Integer queryBookMinPrice() {
+        String sql = "select min(price) from t_book";
+        return queryForSingleValue(sql).intValue();
+    }
+
+    @Override
+    public Integer queryBookMaxPrice() {
+        String sql = "select max(price) from t_book";
+        return queryForSingleValue(sql).intValue();
     }
 }

@@ -52,7 +52,7 @@ public abstract class BaseDao {
     }
 
 
-    public Object queryForSingleValue(String sql,Object...args){
+    public Number queryForSingleValue(String sql,Object...args){
         Connection connection = DruidUtil.getConnection();
         try {
             return (queryRunner.query(connection,sql,new ScalarHandler<>(),args));

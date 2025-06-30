@@ -22,6 +22,47 @@
         <servlet-class>com.jakie.book.web.BookServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>ClientBookServlet</servlet-name>
+        <servlet-class>com.jakie.book.web.ClientBookServlet</servlet-class>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>KaptchaServlet</servlet-name>
+        <servlet-class>com.google.code.kaptcha.servlet.KaptchaServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>CartServlet</servlet-name>
+        <servlet-class>com.jakie.book.web.CartServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>OrderServlet</servlet-name>
+        <servlet-class>com.jakie.book.web.OrderServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>OrderServlet</servlet-name>
+        <url-pattern>/orderServlet</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet-mapping>
+        <servlet-name>CartServlet</servlet-name>
+        <url-pattern>/cartServlet</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>KaptchaServlet</servlet-name>
+        <url-pattern>/kaptcha.jpg</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ClientBookServlet</servlet-name>
+        <url-pattern>/client/bookServlet</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>BookServlet</servlet-name>
         <url-pattern>/manager/bookServlet</url-pattern>
@@ -41,4 +82,18 @@
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/loginServlet</url-pattern>
     </servlet-mapping>
+
+<!--   过滤器-->
+    <filter>
+        <filter-name>ManagerFilter</filter-name>
+        <filter-class>com.jakie.book.filter.ManagerFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>ManagerFilter</filter-name>
+        <url-pattern>/pages/manager/*</url-pattern>
+        <url-pattern>/manager/bookServlet</url-pattern>
+    </filter-mapping>
+
+
 </web-app>

@@ -2,6 +2,7 @@ package com.jakie.book.web;
 
 import com.jakie.book.dao.impl.BaseDao;
 import com.jakie.book.pojo.Book;
+import com.jakie.book.pojo.Page;
 import com.jakie.book.service.BookService;
 import com.jakie.book.service.impl.BookServiceImpl;
 import com.jakie.book.utils.WebUtils;
@@ -12,14 +13,17 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class BookServlet extends BaseServlet {
     private BookService bookService = new BookServiceImpl();
     public void delete(HttpServletRequest req,HttpServletResponse resp){
         Integer id = Integer.valueOf(req.getParameter("id"));
         bookService.deleteBookById(id);
+
+
         try {
-            resp.sendRedirect(req.getContextPath()+"/manager/bookServlet?action=list");
+            resp.sendRedirect(req.getContextPath()+"${requestScope.page.url}?action=page&pageNo="+req.getParameter("pageNo"));
         }  catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -55,7 +59,7 @@ public class BookServlet extends BaseServlet {
         Book book = WebUtils.copyParamToBean(parameterMap, new Book());
         bookService.updateBook(book);
         try {
-            resp.sendRedirect(req.getContextPath()+"/manager/bookServlet?action=list");
+            resp.sendRedirect(req.getContextPath()+"${requestScope.page.url}?action=page&pageNo="+req.getParameter("pageNo"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -70,13 +74,18 @@ public class BookServlet extends BaseServlet {
 //            System.out.println(idx.getKey()+" "+ Arrays.asList(idx.getValue()));
 //        }
 
+
+        System.out.println("总页码 "+req.getParameter("pageNo"));
         //将请求域中的参数封装到Bean中
         Book book = WebUtils.copyParamToBean( req.getParameterMap(),new Book());
 
         System.out.println(book);
         bookService.addBook(book);
+        String pageNo = req.getParameter("pageNo");
+
+
         try {
-            resp.sendRedirect(req.getContextPath()+"/manager/bookServlet?action=list");
+            resp.sendRedirect(req.getContextPath()+"${requestScope.page.url}?action=page&pageNo="+(Integer.valueOf(req.getParameter("pageNo"))+1));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -90,6 +99,31 @@ public class BookServlet extends BaseServlet {
             req.getRequestDispatcher("/pages/manager/book_manager.jsp").forward(req,resp);
         } catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+
+
+    public void page(HttpServletRequest req,HttpServletResponse resp){
+        String pageNo_str = req.getParameter("pageNo");
+        String pageSize_str = req.getParameter("pageSize");
+        //如果传递的参数中pageNo和pageSize空 则pageNo为1 默认显示第一页  pageSize 等于 page类中 PAGE_SIZE 默认值
+        Integer pageNo = Integer.valueOf(pageNo_str==null?"1":pageNo_str);
+        Integer pageSize = Integer.valueOf(pageSize_str==null?Page.PAGE_SIZE+"":pageSize_str);
+        Page page = bookService.page(pageNo, pageSize);
+        page.setUrl("manager/bookServlet");
+        req.setAttribute("page",page);
+
+
+
+//        System.out.println("page       "+page.getPageNo());
+
+        try {
+            req.getRequestDispatcher("/pages/manager/book_manager.jsp").forward(req,resp);
+        } catch (ServletException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

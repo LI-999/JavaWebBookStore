@@ -14,6 +14,7 @@
             +":"+request.getServerPort()
             +request.getContextPath()
             +"/";
+    pageContext.setAttribute("url",address);
 %>
 <base href="<%=address%>">
 <link type="text/css" rel="stylesheet" href="static/css/style.css" >

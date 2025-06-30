@@ -62,10 +62,19 @@
 				$('.errorMsg').text('验证码错误');
 				return false;
 			}
-			
-			
-			$('.errorMsg').text('');
 
+			$('.errorMsg').text('');
+		})
+
+		//验证码图片单击刷新
+		$("#code_jpg").click(function(){
+			//属性整个页面 不适合放在这里当用户输入完用户名、密码、邮箱时 点击验证码会导致用户名密码邮箱被清空
+			// location.reload();
+
+			<%--alert("${url}");--%>
+			<%-- header中的设置的绝对路径  ${url}--%>
+			this.src = "${url}kaptcha.jpg";
+			console.log(new Date());
 		})
 	})
 </script>
@@ -113,7 +122,7 @@
 									<br />
 									<label>验证码：</label>
 									<input class="itxt" type="text" style="width: 150px;" id="code" name="code"/>
-									<img alt="" src="static/img/code.bmp" style="float: right; margin-right: 40px">
+									<img id="code_jpg" alt="" src="kaptcha.jpg" style="float: right; margin-right: 40px; width:90px;height:40px">
 									<br />
 									<br />
 									<input type="submit" value="注册" id="sub_btn" />

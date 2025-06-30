@@ -20,12 +20,12 @@ import java.lang.reflect.Method;
 public class UserServlet extends BaseServlet {
 
     private UserService userService = new UserServiceImpl();
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ServletContext servletContext = getServletContext();
-        System.out.println(servletContext.getRealPath("/footer.jsp"));
-
-    }
+//    @Override
+//    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        ServletContext servletContext = getServletContext();
+//        System.out.println(servletContext.getRealPath("/footer.jsp"));
+//
+//    }
 
     protected void login(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
         String username = req.getParameter("username");
@@ -33,6 +33,14 @@ public class UserServlet extends BaseServlet {
         User user = userService.login(new User(null, username, password, null));
         if(user!=null){
             System.out.println("登录成功");
+            //视频教的
+            //登录成功的用户名
+            req.getSession().setAttribute("user",user);
+
+            //2025-6-27 22:35 用cookie有什么弊端吗  后期生成订单需要用到用户的id但 cookie中没有id session中有
+//            Cookie cookie = new Cookie("username", username);
+//            resp.addCookie(cookie);
+
             req.getRequestDispatcher("/pages/user/login_success.jsp").forward(req,resp);
         }else{
             System.out.println("用户名或密码错误");
@@ -50,6 +58,12 @@ public class UserServlet extends BaseServlet {
      * @return void
      **/
     protected void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+
+        //获取验证码
+        String kaptchaSessionKey = (String)request.getSession().getAttribute("KAPTCHA_SESSION_KEY");
+        request.getSession().removeAttribute("KAPTCHA_SESSION_KEY");
+
+
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String email = request.getParameter("email");
@@ -59,8 +73,8 @@ public class UserServlet extends BaseServlet {
         User user = WebUtils.copyParamToBean(request.getParameterMap(), new User());
 
 
-        //验证码写成静态的
-        if ("abcde".equals(code)) {
+
+        if (kaptchaSessionKey!=null&&kaptchaSessionKey.equals(code)) {
             if (!userService.existsUsername(username)) {
                 System.out.println("注册成功");
                 userService.registerUser(new User(null,username,password,email));
@@ -85,6 +99,22 @@ public class UserServlet extends BaseServlet {
                 e.printStackTrace();
             }
         }
+    }
+
+    protected void logout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+        System.out.println("logout被调用");
+//        HttpSession session = req.getSession();
+//        session.invalidate();
+//        resp.sendRedirect(req.getContextPath()+"/index.jsp");
+
+        Cookie[] cookies = req.getCookies();
+
+        for(Cookie cookie:cookies)
+            if("username".equals(cookie.getName())) {
+                cookie.setMaxAge(0);
+                resp.addCookie(cookie);
+            }
+        resp.sendRedirect(req.getContextPath()+"/index.jsp");
     }
 
 

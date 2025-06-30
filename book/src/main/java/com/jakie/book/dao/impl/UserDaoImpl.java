@@ -3,6 +3,8 @@ package com.jakie.book.dao.impl;
 import com.jakie.book.dao.UserDao;
 import com.jakie.book.pojo.User;
 
+import java.sql.SQLException;
+
 public class UserDaoImpl extends BaseDao implements UserDao {
     @Override
     public User queryUserByUsernameAndPassword(String username, String password) {
@@ -23,7 +25,7 @@ public class UserDaoImpl extends BaseDao implements UserDao {
     }
 
 
-    public void count(){
+    public void count() throws SQLException {
         String sql = "select count(*) from t_user";
         System.out.println(queryForSingleValue(sql));
     }

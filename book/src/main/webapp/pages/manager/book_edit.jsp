@@ -35,6 +35,8 @@
 				<input type="hidden" name="action" value="${empty param.id?"add":"update"}">
 <%--	获取要更新的图书id--%>
 <%--				<p>requestScope.book.id${requestScope.update_book.id} param.id:${param.id}</p>--%>
+				<input type="hidden" name="pageNo" value="${param.pageNo}">
+
 				<input type="hidden" name="id" value="${param.id}">
 				<table>
 					<tr>

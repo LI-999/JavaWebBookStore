@@ -11,6 +11,7 @@ import java.util.Properties;
 
 public class DruidUtil {
     private static DataSource dataSource;
+    private static ThreadLocal<Connection> conns = new ThreadLocal<>();
 
     static {
 
@@ -23,7 +24,7 @@ public class DruidUtil {
         }
     }
 
-    public static Connection getConnection(){
+    public static Connection getConnection() {
         try {
             return dataSource.getConnection();
         } catch (SQLException e) {
@@ -32,12 +33,12 @@ public class DruidUtil {
         }
     }
 
-    public static DataSource getDatasource(){
+    public static DataSource getDatasource() {
         return dataSource;
     }
 
-    public static void close(Connection conn, PreparedStatement ps){
-        if(conn!=null){
+    public static void close(Connection conn, PreparedStatement ps) {
+        if (conn != null) {
             try {
                 conn.close();
             } catch (SQLException e) {
@@ -45,7 +46,7 @@ public class DruidUtil {
             }
         }
 
-        if(ps!=null){
+        if (ps != null) {
             try {
                 ps.close();
             } catch (SQLException e) {
@@ -54,9 +55,9 @@ public class DruidUtil {
         }
     }
 
-    public static void close(Connection conn, PreparedStatement ps, ResultSet rs){
-        close(conn,ps);
-        if(rs!=null){
+    public static void close(Connection conn, PreparedStatement ps, ResultSet rs) {
+        close(conn, ps);
+        if (rs != null) {
             try {
                 rs.close();
             } catch (SQLException e) {
