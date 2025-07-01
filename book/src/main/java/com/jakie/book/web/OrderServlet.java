@@ -4,6 +4,7 @@ import com.jakie.book.pojo.Cart;
 import com.jakie.book.pojo.User;
 import com.jakie.book.service.OrderService;
 import com.jakie.book.service.impl.OrderServiceImpl;
+import com.jakie.book.utils.DruidUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -31,7 +32,10 @@ public class OrderServlet extends BaseServlet{
         }
 
         //返回生成的订单编号
-        String orderId = orderService.createOrder(cart, user.getId());
+        String orderId = null;
+
+        orderId = orderService.createOrder(cart, user.getId());
+
         System.out.println("生成的订单编号 "+orderId);
         req.getSession().setAttribute("orderId",orderId);
 

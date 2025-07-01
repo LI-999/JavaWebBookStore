@@ -67,5 +67,7 @@ class CartTest {
         cart.updateCount(2,10);
 
         System.out.println(cart);
+        ThreadLocal<Object> threadLocal = new ThreadLocal<>();
+        threadLocal.remove();
     }
 }

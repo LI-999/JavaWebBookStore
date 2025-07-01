@@ -16,6 +16,7 @@
 
     <script>
         $(function () {
+
             $(".searchPageBtn").click(function () {
                 var $pageNo = $("#pn_input").val();
                 <%--alert(${pageScope.url});--%>
@@ -34,11 +35,22 @@
             $(".add_item").click(function () {
                 // alert($(this).attr("book_id"));
                 var $id = $(this).attr("book_id");
+                <%--location.href = "${pageScope.url}cartServlet?action=addItem&book_id=" + $id;--%>
+                $.getJSON("${pageScope.url}cartServlet","action=ajaxAddItem&book_id="+$id,function(msg){
+                    console.log("ajaxAdd")
+                    console.log(msg.totalCount)
+                    console.log(msg.lastName)
 
-                location.href = "${pageScope.url}cartServlet?action=addItem&book_id=" + $id;
+                    $("#span_lastAddBook").parent().prop("hidden",false);
+                    $("#span_totalCount").prop("hidden",false);
+                    $("#empty_cart").prop("hidden",true);
+
+                    $("#span_totalCount").text("您的购物车中有"+msg.totalCount+"件商品");
+                    $("#span_lastAddBook").text(msg.lastName);
+
+                })
                 console.log(location.href);
             })
-
 
         })
     </script>
@@ -80,19 +92,19 @@
             </form>
         </div>
         <div style="text-align: center">
-            <c:if test="${not empty sessionScope.cart.itemMap}">
-                <span>您的购物车中有${sessionScope.cart.totalCount}件商品</span>
-                <div>
-                    您刚刚将<span style="color: red">${sessionScope.lastAddBook}</span>加入到了购物车中
+<%--            <c:if test="${not empty sessionScope.cart.itemMap}">--%>
+                <span id="span_totalCount" hidden="hidden">您的购物车中有${sessionScope.cart.totalCount}件商品</span>
+                <div hidden="hidden">
+                    您刚刚将<span style="color: red" id="span_lastAddBook" >${sessionScope.lastAddBook}</span>加入到了购物车中
                 </div>
-            </c:if>
+<%--            </c:if>--%>
 
 
-            <c:if test="${empty sessionScope.cart.itemMap}">
+<%--            <c:if test="${empty sessionScope.cart.itemMap}">--%>
                 <div>
-                    <span style="color: red">您的购物车中为空</span>
+                    <span style="color: red" id="empty_cart">您的购物车中为空</span>
                 </div>
-            </c:if>
+<%--            </c:if>--%>
 
 
         </div>
@@ -126,6 +138,7 @@
                     <div class="book_add">
                         <button class="add_item" book_id="${book.id}">加入购物车</button>
                     </div>
+
                 </div>
 
             </div>

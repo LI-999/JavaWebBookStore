@@ -1,5 +1,6 @@
 package com.jakie.book.web;
 
+import com.google.gson.Gson;
 import com.jakie.book.pojo.User;
 import com.jakie.book.service.UserService;
 import com.jakie.book.service.impl.UserServiceImpl;
@@ -9,6 +10,9 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 /***
  * @Author jakie
@@ -117,5 +121,26 @@ public class UserServlet extends BaseServlet {
         resp.sendRedirect(req.getContextPath()+"/index.jsp");
     }
 
+    /**
+     * @Author jakie
+     * @Description //TODO 通过ajax技术 实现用户注册页面 输入用户名 输入框失焦过后直接判断该用户名是否有效
+     * @Date 15:13 2025/7/1
+     * @Param [request, response]
+     * @return void
+     **/
+    protected void ajaxExsistsUsername(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String username = request.getParameter("username");
 
+        Map<String,Boolean> map = new HashMap<>();
+
+        map.put("exsistsUsername",userService.existsUsername(username));
+
+        Gson gson = new Gson();
+
+        String s = gson.toJson(map);
+
+        response.getWriter().write(s);
+
+
+    }
 }

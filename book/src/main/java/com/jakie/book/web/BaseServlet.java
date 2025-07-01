@@ -23,6 +23,8 @@ public abstract class BaseServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //设置服务器响应客户端的编码
+        response.setContentType("text/html; charset=utf-8");
         String action = request.getParameter("action");
         System.out.println("action "+action);
         //利用反射减少if else if 语句
@@ -40,6 +42,7 @@ public abstract class BaseServlet extends HttpServlet {
             method.invoke(this, request, response);
         }catch (Exception e){
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }
